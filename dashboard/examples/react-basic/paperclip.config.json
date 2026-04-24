@@ -1,4 +1,0 @@
-{
-  "compilerOptions": [{ "emit": ["d.ts"] }],
-  "srcDir": "./src"
-}
