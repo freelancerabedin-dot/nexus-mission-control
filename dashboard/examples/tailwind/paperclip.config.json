@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "react",
+    "outDir": "lib",
+    "importAssetsAsModules": true
+  },
+  "srcDir": "./src",
+  "moduleDirs": ["./node_modules"]
+}
