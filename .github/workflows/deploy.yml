@@ -30,8 +30,41 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build
-        run: pnpm build
+      - name: Build UI
+        run: pnpm --filter @paperclipai/ui build --config vite.config.gh-pages.ts
+
+      - name: Configure base path for GitHub Pages
+        run: |
+          cd ui
+          # Create a custom vite config for GitHub Pages
+          cat > vite.config.gh-pages.ts << 'EOF'
+          import path from "path";
+          import { defineConfig } from "vite";
+          import react from "@vitejs/plugin-react";
+          import tailwindcss from "@tailwindcss/vite";
+          import { createUiDevWatchOptions } from "./src/lib/vite-watch";
+
+          export default defineConfig(({ mode }) => ({
+            base: "/nexus-mission-control/",
+            plugins: [react(), tailwindcss()],
+            build: {
+              minify: "esbuild",
+            },
+            esbuild:
+              mode === "production"
+                ? {
+                    drop: ["console", "debugger"],
+                    legalComments: "none",
+                  }
+                : undefined,
+            resolve: {
+              alias: {
+                "@": path.resolve(__dirname, "./src"),
+                lexical: path.resolve(__dirname, "./node_modules/lexical/Lexical.mjs"),
+              },
+            },
+          }));
+          EOF
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
